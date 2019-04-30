@@ -1,13 +1,7 @@
-/********************************
-*** Multiplexer for Go        ***
-*** Bone is under MIT license ***
-*** Code by CodingFerret      ***
-*** github.com/go-zoo         ***
-*********************************/
-
 package tea
 
 import (
+	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
@@ -20,8 +14,10 @@ const (
 	SUB = 4
 	//WC value store in Atts if the route have wildcard
 	WC = 8
-	//REGEX value store in Atts if the route contains regex
+	//REGEX value store in Atts if the route contains regex #
 	REGEX = 16
+	//REGEXC value store in compileSet @
+	REGEXC = 32
 )
 
 // Route content the required information for a valid route
@@ -92,6 +88,18 @@ func (r *Route) save() {
 				r.Tag[i] = tmp[0][1:]
 				r.Compile[i] = regexp.MustCompile("^" + tmp[1][:len(tmp[1])-1])
 				r.Atts |= REGEX
+			case "@":
+				if r.Compile == nil {
+					r.Compile = make(map[int]*regexp.Regexp)
+					r.Tag = make(map[int]string)
+				}
+
+				if v, found := compileVars[s]; found {
+					r.Tag[i] = s[1:]
+					r.Compile[i] = v
+					fmt.Println(s, v)
+				}
+				r.Atts |= REGEXC
 			case "*":
 				r.wildPos = i
 				r.Atts |= WC
@@ -113,13 +121,11 @@ func (r *Route) Match(req *http.Request) bool {
 // variables if it matches
 func (r *Route) matchAndParse(req *http.Request) (bool, map[string]string) {
 	ss := strings.Split(req.URL.EscapedPath(), "/")
-	//args := Args{} // ??
-	// add Eval
 
 	if r.matchRawTokens(&ss) {
 		if len(ss) == r.Token.Size || r.Atts&WC != 0 {
 			totalSize := len(r.Pattern)
-			if r.Atts&REGEX != 0 {
+			if r.Atts&REGEX != 0 || r.Atts&REGEXC != 0 {
 				totalSize += len(r.Compile)
 			}
 
@@ -136,7 +142,7 @@ func (r *Route) matchAndParse(req *http.Request) (bool, map[string]string) {
 				}
 			}
 
-			if r.Atts&REGEX != 0 {
+			if r.Atts&REGEX != 0 || r.Atts&REGEXC != 0 {
 				for k, v := range r.Compile {
 					if !v.MatchString(ss[k]) {
 						return false, nil
@@ -144,7 +150,6 @@ func (r *Route) matchAndParse(req *http.Request) (bool, map[string]string) {
 					vars[r.Tag[k]] = ss[k]
 				}
 			}
-
 			return true, vars
 		}
 	}

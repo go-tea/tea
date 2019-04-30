@@ -1,0 +1,19 @@
+package serve
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/go-tea/tea"
+)
+
+func Wrap(mw func(h http.Handler) http.Handler) func(mux *tea.Mux) *tea.Mux {
+	return func(mux *tea.Mux) *tea.Mux {
+		mux.Serve = func(w http.ResponseWriter, r *http.Request) {
+			ctx := context.WithValue(context.Background(), "mw", mw)
+			r = r.WithContext(ctx)
+			mux.DefaultServe(w, r)
+		}
+		return mux
+	}
+}

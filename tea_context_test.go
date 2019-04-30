@@ -72,6 +72,7 @@ func BenchmarkVariableWithContext(b *testing.B) {
 	}
 }
 
+/*
 func BenchmarkVariableWithParams(b *testing.B) {
 	var (
 		expected = "variable"
@@ -104,3 +105,4 @@ func BenchmarkVariableWithParams(b *testing.B) {
 		b.Fatalf("expected %s, got %s", expected, got)
 	}
 }
+*/

@@ -4,20 +4,20 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/go-zoo/bone"
+	"github.com/go-tea/tea"
 )
 
 func main() {
-	mux := bone.New()
+	mux := tea.New()
 
-	mux.NotFoundFunc(func(rw http.ResponseWriter, req *http.Request) {
+	mux.NotFound(func(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(http.StatusTeapot)
 	})
 
-	mux.GetFunc("/", defaultHandler)
-	mux.GetFunc("/reg/#var^[a-z]$/#var2^[0-9]$", ShowVar)
-	mux.GetFunc("/test", defaultHandler)
-	mux.Get("/file/", http.StripPrefix("/file/", http.FileServer(http.Dir("assets"))))
+	mux.Get("/", defaultHandler)
+	mux.Get("/reg/#var^[a-z]$/#var2^[0-9]$", ShowVar)
+	mux.Get("/test", defaultHandler)
+	mux.Handler("/file/", http.StripPrefix("/file/", http.FileServer(http.Dir("assets"))))
 
 	http.ListenAndServe(":8080", mux)
 }
@@ -28,5 +28,5 @@ func defaultHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func ShowVar(rw http.ResponseWriter, req *http.Request) {
-	rw.Write([]byte(bone.GetAllValues(req)["var"]))
+	rw.Write([]byte(tea.GetAllValues(req)["var"]))
 }

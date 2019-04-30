@@ -1,12 +1,5 @@
 // +build !go1.7
 
-/********************************
-*** Multiplexer for Go        ***
-*** Bone is under MIT license ***
-*** Code by CodingFerret      ***
-*** github.com/go-zoo         ***
-*********************************/
-
 package tea
 
 import (

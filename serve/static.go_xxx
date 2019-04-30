@@ -1,0 +1,144 @@
+package serve
+
+import (
+	//	"bytes"
+	///	"fmt"
+	//	"io"
+	"mime"
+	"net/http"
+	"os"
+	"path/filepath"
+
+	"github.com/go-tea/tea"
+)
+
+type Asserter interface {
+	Asset(name string) ([]byte, error)
+	AssetInfo(name string) (os.FileInfo, error)
+}
+
+func Static(mux *tea.Mux) *tea.Mux {
+
+	mux.Serve = func(w http.ResponseWriter, req *http.Request) {
+
+		fs := http.FileServer(http.Dir("static"))
+		mux.GetSH("/static/*", http.StripPrefix("/static/", fs))
+
+		/*
+			folder := tea.GetValue(req, "folder")
+			file := tea.GetValue(req, "file")
+
+			path := "static/" + folder + "/" + file
+
+			data, err := Asset(path)
+			if err != nil {
+				fmt.Println("Error data")
+			}
+
+			fi, err := AssetInfo(path)
+
+			if err != nil {
+				fmt.Println("Error fi")
+				w.Write([]byte(err.Error()))
+			}
+
+			buffer := bytes.NewReader(data)
+
+			w.Header().Set("Content-Type", detectContentType(fi.Name()))
+
+			fitype := detectContentType(fi.Name())
+			switch fitype {
+			case "image/jpg":
+				w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+			case "image/gif":
+				w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+			case "image/png":
+				w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+			case "text/css; charset=utf-8":
+				w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+			case "application/javascript":
+				w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+			case "application/x-shockwave-flash":
+				w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+			default:
+				w.Header().Set("Cache-Control", "	no-cache, must-revalidate, max-age=0")
+			}
+
+			w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
+
+			w.WriteHeader(http.StatusOK)
+
+			_, err = io.Copy(w, buffer)
+			if err != nil {
+				w.Write([]byte(err.Error()))
+			}
+		*/
+
+		mux.DefaultServe(w, req)
+
+	}
+	return mux
+}
+
+/*
+func serveFile(w http.ResponseWriter, req *http.Request) {
+
+	folder := tea.GetValue(req, "folder")
+	file := tea.GetValue(req, "file")
+
+	path := "static/" + folder + "/" + file
+
+	data, err := Asset(path)
+	if err != nil {
+		fmt.Println("Error data")
+	}
+
+	fi, err := AssetInfo(path)
+
+	if err != nil {
+		fmt.Println("Error fi")
+		w.Write([]byte(err.Error()))
+	}
+
+	buffer := bytes.NewReader(data)
+
+	w.Header().Set("Content-Type", detectContentType(fi.Name()))
+
+	fitype := detectContentType(fi.Name())
+	switch fitype {
+	case "image/jpg":
+		w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+	case "image/gif":
+		w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+	case "image/png":
+		w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+	case "text/css; charset=utf-8":
+		w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+	case "application/javascript":
+		w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+	case "application/x-shockwave-flash":
+		w.Header().Set("Cache-Control", "max-age=86400") // 1 day
+	default:
+		w.Header().Set("Cache-Control", "	no-cache, must-revalidate, max-age=0")
+	}
+
+	w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
+
+	w.WriteHeader(http.StatusOK)
+
+	_, err = io.Copy(w, buffer)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
+
+	mux.DefaultServe(w, req)
+
+}
+*/
+
+func detectContentType(name string) (t string) {
+	if t = mime.TypeByExtension(filepath.Ext(name)); t == "" {
+		t = "application/octet-stream"
+	}
+	return
+}

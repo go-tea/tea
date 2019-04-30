@@ -1,10 +1,3 @@
-/********************************
-*** Multiplexer for Go        ***
-*** Bone is under MIT license ***
-*** Code by CodingFerret      ***
-*** github.com/go-zoo         ***
-*********************************/
-
 package tea
 
 import (
@@ -21,14 +14,14 @@ type Router interface {
 // Route: all the registred route
 // notFound: 404 handler, default http.NotFound if not provided
 type Mux struct {
-	//params.MuxParams
+	compile       compileSet
 	Routes        map[string][]*Route
 	prefix        string
 	notFound      http.Handler
 	Serve         func(rw http.ResponseWriter, req *http.Request)
 	CaseSensitive bool
-	middlewares   []func(http.Handler) http.Handler
-	handler       http.Handler //// The computed mux handler made of the chained middleware stack and the tree router
+	//	middlewares   []func(http.Handler) http.Handler
+	//	handler       http.Handler //// The computed mux handler made of the chained middleware stack and the tree router
 }
 
 var (
@@ -47,6 +40,8 @@ func New(adapters ...adapter) *Mux {
 	if m.Serve == nil {
 		m.Serve = m.DefaultServe
 	}
+	m.compile = compileVars
+
 	return m
 }
 
@@ -78,17 +73,25 @@ func (mux *Mux) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if !mux.CaseSensitive {
 		req.URL.Path = strings.ToLower(req.URL.Path)
 	}
-
-	if len(mux.middlewares) == 0 {
-		mux.Serve(rw, req)
-		return
-	} else {
-		mux.handler.ServeHTTP(rw, req)
-	}
-
+	mux.Serve(rw, req)
+	/*
+		if len(mux.middlewares) == 0 {
+			mux.Serve(rw, req)
+			return
+		} else {
+			mux.handler.ServeHTTP(rw, req)
+		}
+	*/
 }
 
 // Middlewares returns a slice of middleware handler functions.
+/*
 func (mux *Mux) Middlewares() Middlewares {
 	return mux.middlewares
+}
+*/
+
+// AddRegex adds a ":named" regular expression
+func (mux *Mux) AddRegex(name string, regex interface{}) error {
+	return mux.compile.Set(name, regex)
 }

@@ -588,7 +588,7 @@ func TestMux_Handle(t *testing.T) {
 				notFound: tt.fields.notFound,
 				Serve:    tt.fields.Serve,
 			}
-			m.Handle(tt.args.path, tt.args.handler)
+			m.Handler(tt.args.path, tt.args.handler)
 		})
 	}
 }

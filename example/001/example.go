@@ -2,16 +2,18 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/go-tea/tea"
+	"github.com/go-tea/tea/serve"
 )
 
+/*
 var (
-	mux = tea.New(Serve, Wrap)
+	mux = tea.New(serve.RealIP, serve.Logger)
+	//mux = tea.New(Serve, Wrap)
 )
 
 func Wrap(mux *tea.Mux) *tea.Mux {
@@ -26,16 +28,13 @@ func Serve(mux *tea.Mux) *tea.Mux {
 	}
 	return mux
 }
+*/
 
 func main() {
-	// Custom 404
-	mux.NotFound(Handler404)
-	// Handle with any http method, Handle takes http.Handler as argument.
-	//	mux.Handle("/index", http.HandlerFunc(homeHandler))
-	mux.Handle("/index", homeHandler)
-	mux.Handle("/index/:var/info/:test", varHandler)
-	// Get, Post etc... takes http.HandlerFunc as argument.
-	mux.Post("/home", homeHandler)
+	mux := tea.New(serve.RealIP, serve.RequestID, serve.Timeout(60*time.Second), serve.Static, serve.Recoverer, serve.Logger)
+
+	//	mux.NotFound(Handler404)
+	mux.Get("/home", homeHandler)
 	mux.Get("/home/:var", varHandler)
 
 	mux.Get("/test/*", func(rw http.ResponseWriter, req *http.Request) {
@@ -47,7 +46,7 @@ func main() {
 }
 
 func homeHandler(rw http.ResponseWriter, req *http.Request) {
-	rw.Write([]byte("WELCOME HOME"))
+	rw.Write([]byte("HOME WELKOME"))
 }
 
 func varHandler(rw http.ResponseWriter, req *http.Request) {
@@ -65,5 +64,7 @@ func varHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func Handler404(rw http.ResponseWriter, req *http.Request) {
+	rw.WriteHeader(http.StatusNotFound)
 	rw.Write([]byte("These are not the droids you're looking for ..."))
+
 }
