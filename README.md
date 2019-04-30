@@ -19,14 +19,9 @@ import (
 var mux *tea.Mux
 
 func main() {
-	mux = tea.New()
+	mux = tea.New(serve.RequestID, serve.Recoverer, serve.Logger)
 	mux.CaseSensitive = true
-
-	mux.Use(middleware.RequestID)
-	mux.Use(middleware.RealIP)
-	mux.Use(middleware.Logger)
-	mux.Use(middleware.Recoverer)
-
+	
 	mux.Get("/ctx/:var", handler)
 	mux.Get("/ctx2/:var", handler2)
 	mux.Get("/ctx3/:var/#id^[0-9]$", handler3)
