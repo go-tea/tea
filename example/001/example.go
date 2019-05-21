@@ -4,36 +4,16 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-tea/tea"
 	"github.com/go-tea/tea/serve"
 )
 
-/*
-var (
-	mux = tea.New(serve.RealIP, serve.Logger)
-	//mux = tea.New(Serve, Wrap)
-)
-
-func Wrap(mux *tea.Mux) *tea.Mux {
-	return mux.Prefix("/api")
-}
-
-func Serve(mux *tea.Mux) *tea.Mux {
-	mux.Serve = func(rw http.ResponseWriter, req *http.Request) {
-		tr := time.Now()
-		mux.DefaultServe(rw, req)
-		fmt.Println("Serve request from", req.RemoteAddr, "in", time.Since(tr))
-	}
-	return mux
-}
-*/
-
 func main() {
-	mux := tea.New(serve.RealIP, serve.RequestID, serve.Timeout(60*time.Second), serve.Static, serve.Recoverer, serve.Logger)
 
-	//	mux.NotFound(Handler404)
+	mux := tea.New(serve.RealIP, serve.Logger)
+
+	mux.NotFound(Handler404)
 	mux.Get("/home", homeHandler)
 	mux.Get("/home/:var", varHandler)
 
@@ -46,7 +26,7 @@ func main() {
 }
 
 func homeHandler(rw http.ResponseWriter, req *http.Request) {
-	rw.Write([]byte("HOME WELKOME"))
+	rw.Write([]byte("WELCOME HOME"))
 }
 
 func varHandler(rw http.ResponseWriter, req *http.Request) {

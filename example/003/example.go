@@ -3,19 +3,14 @@ package main
 import (
 	"net/http"
 
-	"github.com/go-tea/middleware"
 	"github.com/go-tea/tea"
+	"github.com/go-tea/tea/serve"
 	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	boneSub := tea.New()
-
-	boneSub.Use(middleware.RequestID)
-	boneSub.Use(middleware.RealIP)
-	boneSub.Use(middleware.Logger)
-	boneSub.Use(middleware.Recoverer)
+	boneSub := tea.New(serve.RealIP, serve.Recoverer, serve.Logger)
 
 	gorrilaSub := mux.NewRouter()
 	httprouterSub := httprouter.New()
@@ -33,11 +28,6 @@ func main() {
 	})
 
 	muxx := tea.New().Prefix("/api")
-
-	//	muxx.Use(middleware.RequestID)
-	//	muxx.Use(middleware.RealIP)
-	//	muxx.Use(middleware.Logger)
-	//	muxx.Use(middleware.Recoverer)
 
 	muxx.SubRoute("/bone", boneSub)
 	muxx.SubRoute("/gorilla", gorrilaSub)
