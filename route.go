@@ -56,6 +56,7 @@ type Arg struct {
 	Value string
 }
 
+// Args array
 type Args []Arg
 
 // NewRoute return a pointer to a Route instance and call save() on it

@@ -33,6 +33,7 @@ func (p urlParams) Get(key string) (param string) {
 	return
 }
 
+// ReqVars interface
 type ReqVars interface {
 	URLParam(pname string) string
 }

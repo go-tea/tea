@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// ListenAndServe function
 func (m *Mux) ListenAndServe(port string) error {
 	return http.ListenAndServe(port, m)
 }
