@@ -69,29 +69,14 @@ func (m *Mux) DefaultServe(rw http.ResponseWriter, req *http.Request) {
 }
 
 // ServeHTTP pass the request to the serve method of Mux
-func (mux *Mux) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	if !mux.CaseSensitive {
+func (m *Mux) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	if !m.CaseSensitive {
 		req.URL.Path = strings.ToLower(req.URL.Path)
 	}
-	mux.Serve(rw, req)
-	/*
-		if len(mux.middlewares) == 0 {
-			mux.Serve(rw, req)
-			return
-		} else {
-			mux.handler.ServeHTTP(rw, req)
-		}
-	*/
+	m.Serve(rw, req)
 }
-
-// Middlewares returns a slice of middleware handler functions.
-/*
-func (mux *Mux) Middlewares() Middlewares {
-	return mux.middlewares
-}
-*/
 
 // AddRegex adds a ":named" regular expression
-func (mux *Mux) AddRegex(name string, regex interface{}) error {
-	return mux.compile.Set(name, regex)
+func (m *Mux) AddRegex(name string, regex interface{}) error {
+	return m.compile.Set(name, regex)
 }
