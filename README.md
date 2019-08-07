@@ -1,4 +1,6 @@
+# tea
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-tea/tea)](https://goreportcard.com/report/github.com/go-tea/tea)
 
 fork from github.com/go-zoo/bone
 
@@ -12,7 +14,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-tea/middleware"
+	"github.com/go-tea/serve"
 	"github.com/go-tea/tea"
 )
 
