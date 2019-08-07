@@ -10,6 +10,9 @@ import (
 	"testing"
 )
 
+type key interface{}
+type value interface{}
+
 func TestRoutingVariableWithContext(t *testing.T) {
 	var (
 		expected = "variable"
@@ -22,8 +25,14 @@ func TestRoutingVariableWithContext(t *testing.T) {
 		got = GetValue(r, "vartest")
 	}
 
+	var k key
+	var v value
+
+	k = "key"
+	v = "customValue"
+
 	middlewareFn := func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "key", "customValue")
+		ctx := context.WithValue(r.Context(), k, v)
 		newReq := r.WithContext(ctx)
 		appFn(w, newReq)
 	}
@@ -52,8 +61,14 @@ func BenchmarkVariableWithContext(b *testing.B) {
 		got = GetValue(r, "vartest")
 	}
 
+	var k key
+	var v value
+
+	k = "key"
+	v = "customValue"
+
 	middlewareFn := func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "key", "customValue")
+		ctx := context.WithValue(r.Context(), k, v)
 		newReq := r.WithContext(ctx)
 		appFn(w, newReq)
 	}

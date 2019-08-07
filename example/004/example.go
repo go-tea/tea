@@ -18,8 +18,18 @@ func main() {
 	http.ListenAndServe(":8080", mux)
 }
 
+type key interface{}
+type value interface{}
+
 func rootHandler(rw http.ResponseWriter, req *http.Request) {
-	ctx := context.WithValue(req.Context(), "var", tea.GetValue(req, "var"))
+
+	var k key
+	var v value
+
+	k = "var"
+	v = tea.GetValue(req, "var")
+
+	ctx := context.WithValue(req.Context(), k, v)
 	subHandler(rw, req.WithContext(ctx))
 }
 
