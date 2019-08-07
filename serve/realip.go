@@ -23,6 +23,7 @@ import (
 // proxy, malicious clients will be able to make you very sad (or, depending on
 // how you're using RemoteAddr, vulnerable to an attack of some sort).
 
+// RealIP function
 func RealIP(mux *tea.Mux) *tea.Mux {
 	mux.Serve = func(rw http.ResponseWriter, req *http.Request) {
 		if rip := realIP(req); rip != "" {

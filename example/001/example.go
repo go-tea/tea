@@ -43,6 +43,7 @@ func varHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Handler404 function
 func Handler404(rw http.ResponseWriter, req *http.Request) {
 	rw.WriteHeader(http.StatusNotFound)
 	rw.Write([]byte("These are not the droids you're looking for ..."))

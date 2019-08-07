@@ -28,6 +28,7 @@ func defaultHandler(rw http.ResponseWriter, req *http.Request) {
 	rw.Write(file)
 }
 
+// ShowVar function
 func ShowVar(rw http.ResponseWriter, req *http.Request) {
 	rw.Write([]byte(tea.GetAllValues(req)["var"]))
 }

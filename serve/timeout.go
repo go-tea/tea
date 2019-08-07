@@ -32,6 +32,7 @@ import (
 //  })
 //
 
+// Timeout function
 func Timeout(timeout time.Duration) func(mux *tea.Mux) *tea.Mux {
 	return func(mux *tea.Mux) *tea.Mux {
 		mux.Serve = func(w http.ResponseWriter, r *http.Request) {

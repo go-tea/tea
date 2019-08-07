@@ -23,17 +23,19 @@ func init() {
 
 }
 
+// Vars
 var (
 	LogEntryCtxKey = &contextKey{"LogEntry"}
 	DefaultLogger  = RequestLogger(&DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)})
 	//DefaultLogger = RequestLogger(&DefaultLogFormatter{Logger: &log.Logger{}})
 )
 
+// Logger function
 func Logger(mux *tea.Mux) *tea.Mux {
 	return DefaultLogger(mux)
 }
 
-//func RequestLogger(f LogFormatter) func(next http.Handler) http.Handler {
+// RequestLogger function
 func RequestLogger(f LogFormatter) func(mux *tea.Mux) *tea.Mux {
 	return func(mux *tea.Mux) *tea.Mux {
 		mux.Serve = func(w http.ResponseWriter, r *http.Request) {
@@ -51,29 +53,35 @@ func RequestLogger(f LogFormatter) func(mux *tea.Mux) *tea.Mux {
 	}
 }
 
+// LogFormatter type
 type LogFormatter interface {
 	NewLogEntry(r *http.Request) LogEntry
 }
 
+// LogEntry type
 type LogEntry interface {
 	Write(status, bytes int, elapsed time.Duration)
 	Panic(v interface{}, stack []byte)
 }
 
+// GetLogEntry function
 func GetLogEntry(r *http.Request) LogEntry {
 	entry, _ := r.Context().Value(LogEntryCtxKey).(LogEntry)
 	return entry
 }
 
+// WithLogEntry function
 func WithLogEntry(r *http.Request, entry LogEntry) *http.Request {
 	r = r.WithContext(context.WithValue(r.Context(), LogEntryCtxKey, entry))
 	return r
 }
 
+// DefaultLogFormatter struct
 type DefaultLogFormatter struct {
 	Logger *log.Logger
 }
 
+// NewLogEntry method
 func (l *DefaultLogFormatter) NewLogEntry(r *http.Request) LogEntry {
 	entry := &defaultLogEntry{
 		DefaultLogFormatter: l,
