@@ -1,6 +1,8 @@
-# tea
 
+[![GoDoc Widget]][GoDoc] 
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-tea/tea)](https://goreportcard.com/report/github.com/go-tea/tea)
+
+# tea
 
 fork from github.com/go-zoo/bone
 
