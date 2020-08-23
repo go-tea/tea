@@ -16,14 +16,14 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-tea/serve"
+	"github.com/go-tea/middleware"
 	"github.com/go-tea/tea"
 )
 
 var mux *tea.Mux
 
 func main() {
-	mux = tea.New(serve.RequestID, serve.Recoverer, serve.Logger)
+	mux = tea.New(middleware.RequestID, middleware.Recoverer, serve.Logger)
 	mux.CaseSensitive = true
 	
 	mux.Get("/ctx/:var", handler)
