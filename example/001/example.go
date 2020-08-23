@@ -6,12 +6,14 @@ import (
 	"net/http"
 
 	"github.com/go-tea/tea"
-	"github.com/go-tea/tea/serve"
+	//"github.com/go-tea/tea/serve"
+	"github.com/go-tea/middleware"
 )
 
 func main() {
 
-	mux := tea.New(serve.RealIP, serve.Logger)
+	mux := tea.New(middleware.RealIP, middleware.Logger)
+	//mux := tea.New(serve.RealIP, serve.Logger)
 
 	mux.NotFound(Handler404)
 	mux.Get("/home", homeHandler)

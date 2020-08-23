@@ -449,7 +449,7 @@ func TestSubRouteExtracting(t *testing.T) {
 
 func TestNew(t *testing.T) {
 	type args struct {
-		adapters []adapter
+		adapters []func(http.Handler) http.Handler
 	}
 	tests := []struct {
 		name string
@@ -929,6 +929,10 @@ func TestMux_register(t *testing.T) {
 			}
 		})
 	}
+}
+
+type Router interface {
+	ServeHTTP(http.ResponseWriter, *http.Request)
 }
 
 func TestMux_SubRoute(t *testing.T) {

@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	"github.com/go-tea/tea"
-	"github.com/go-tea/tea/serve"
+	//	"github.com/go-tea/tea/serve"
 )
 
 func main() {
-	mux := tea.New(serve.RealIP, serve.Logger)
+	mux := tea.New()
 
 	mux.NotFound(func(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(http.StatusTeapot)

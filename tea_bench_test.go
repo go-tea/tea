@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/pat"
 	"github.com/harshvladha/hasty"
 	"github.com/julienschmidt/httprouter"
+	"github.com/kataras/muxie"
 	"github.com/squiidz/boneX"
 	"github.com/ursiform/bear"
 )
@@ -22,10 +23,10 @@ func BenchmarkTeaMux(b *testing.B) {
 	request, _ := http.NewRequest("GET", "/sd", nil)
 	response := httptest.NewRecorder()
 	muxx := New()
-	muxx.Get("/", http.HandlerFunc(Bench))
-	muxx.Get("/a", http.HandlerFunc(Bench))
-	muxx.Get("/aas", http.HandlerFunc(Bench))
-	muxx.Get("/sd", http.HandlerFunc(Bench))
+	muxx.Get("/", Bench)
+	muxx.Get("/a", Bench)
+	muxx.Get("/aas", Bench)
+	muxx.Get("/sd", Bench)
 	for n := 0; n < b.N; n++ {
 		muxx.ServeHTTP(response, request)
 	}
@@ -54,6 +55,19 @@ func BenchmarkBoneXMux(b *testing.B) {
 	muxx.Get("/a", BenchX)
 	muxx.Get("/aas", BenchX)
 	muxx.Get("/sd", BenchX)
+	for n := 0; n < b.N; n++ {
+		muxx.ServeHTTP(response, request)
+	}
+}
+
+func BenchmarkMuxieMux(b *testing.B) {
+	request, _ := http.NewRequest("GET", "/sd", nil)
+	response := httptest.NewRecorder()
+	muxx := muxie.NewMux()
+	muxx.HandleFunc("/", http.HandlerFunc(Bench))
+	muxx.HandleFunc("/a", http.HandlerFunc(Bench))
+	muxx.HandleFunc("/aas", http.HandlerFunc(Bench))
+	muxx.HandleFunc("/sd", http.HandlerFunc(Bench))
 	for n := 0; n < b.N; n++ {
 		muxx.ServeHTTP(response, request)
 	}

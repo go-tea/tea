@@ -2,6 +2,7 @@ package tea
 
 import (
 	"net/http"
+	"strings"
 )
 
 // Register the route in the router
@@ -98,7 +99,7 @@ func (m *Mux) Handler(path string, handler http.Handler) {
 }
 
 // SubRoute register a router as a SubRouter of bone
-func (m *Mux) SubRoute(path string, router Router) *Route {
+func (m *Mux) SubRoute(path string, router http.Handler) *Route {
 	r := NewRoute(m.prefix+path, router)
 	if valid(path) {
 		r.Atts += SUB
@@ -110,24 +111,16 @@ func (m *Mux) SubRoute(path string, router Router) *Route {
 	return nil
 }
 
-// Use appends one of more middlewares onto the Router stack.
-/*
-func (mux *Mux) Use(middlewares ...func(http.Handler) http.Handler) {
-	if mux.handler != nil {
-		panic("tea: all middlewares must be defined before routes on a mux")
-	}
-	mux.middlewares = append(mux.middlewares, middlewares...)
+// Temporary way for serving static files
+func (m *Mux) AddStatic(path string, dir string) {
+	fileServer := http.FileServer(http.Dir(dir))
+	newpath := strings.TrimSuffix(path, "*")
+	fileHandler := http.StripPrefix(newpath, fileServer)
+	m.GetSH(path, fileHandler)
 }
-*/
 
 // Register the new route in the router with the provided method and handler
 func (m *Mux) register(method string, path string, handler http.Handler) *Route {
-	/*
-		if m.handler == nil {
-			m.buildRouteHandler()
-		}
-	*/
-
 	r := NewRoute(m.prefix+path, handler)
 	r.Method = method
 	if valid(path) {
@@ -137,13 +130,3 @@ func (m *Mux) register(method string, path string, handler http.Handler) *Route 
 	m.Routes[static] = append(m.Routes[static], r)
 	return r
 }
-
-// buildRouteHandler builds the single mux handler that is a chain of the middleware
-// stack, as defined by calls to Use(), and the tree router (Mux) itself. After this
-// point, no other middlewares can be registered on this Mux's stack. But you can still
-// compose additional middlewares via Group()'s or using a chained middleware handler.
-/*
-func (mux *Mux) buildRouteHandler() {
-	mux.handler = chain(mux.middlewares, http.HandlerFunc(mux.Serve))
-}
-*/
